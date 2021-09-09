@@ -1,6 +1,6 @@
 # News-app
 
-#This is news app built using news api from newsapi.org, this app uses a recycler view to display the news and by clicking on any of the news the news will be opened within the app using custom chrome tabs
+#This news app is built using news api from newsapi.org, this app uses a recycler view to display the news and by clicking on any of the news the news will be opened within the app using custom chrome tabs
 
 #SCREEN SHOTS OF THE APP
 

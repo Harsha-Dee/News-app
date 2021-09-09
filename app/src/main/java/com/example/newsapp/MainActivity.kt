@@ -3,7 +3,9 @@ package com.example.newsapp
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.volley.AuthFailureError
@@ -15,17 +17,68 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), clickListener {
 
+    lateinit var toggle: ActionBarDrawerToggle
+
     private lateinit var mAdapter:NewsAdapter
 
+    var news_url = "https://newsapi.org/v2/top-headlines?country=in&apiKey=0bfd101369b949c4923b33baae521307"
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        val actionBar = supportActionBar
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close)
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        navigationView.setNavigationItemSelectedListener {
+            when(it.itemId){
+                R.id.item1 -> {
+                                actionBar!!.title = "Business"
+                                fetchData("&category=business")
+                              }
+
+                R.id.item2 -> {
+                                actionBar!!.title = "Entertainment"
+                                fetchData("&category=entertainment")
+                              }
+
+                R.id.item3 -> {
+                                actionBar!!.title = "General"
+                                fetchData("&category=general")
+                              }
+
+                R.id.item4 -> {
+                                actionBar!!.title = "Health"
+                                fetchData("&category=health")
+                              }
+
+                R.id.item5 -> {
+                                actionBar!!.title = "Science"
+                                fetchData("&category=science")
+                              }
+
+                R.id.item6 -> {
+                                actionBar!!.title = "Sports"
+                                fetchData("&category=sports")
+                              }
+
+                R.id.item7 -> {
+                                actionBar!!.title = "Technology"
+                                fetchData("&category=technology")
+                              }
+            }
+            true
+        }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        fetchData()
+        fetchData("")
 
         mAdapter = NewsAdapter(this, this)
 
@@ -33,57 +86,17 @@ class MainActivity : AppCompatActivity(), clickListener {
 
     }
 
-//    private fun fetchData() {
-//
-//        val queue = Volley.newRequestQueue(this)
-//
-//    val news_url = "https://newsapi.org/v2/top-headlines?country=in&apiKey=0bfd101369b949c4923b33baae521307"
-//
-//        val jsonObjectRequest = JsonObjectRequest(
-//            Request.Method.GET, news_url, null,
-//
-//            { response ->
-//                val newsJsonArray = response.getJSONArray("articles")
-//
-//                //create a arraylist of NewsDataClass
-//                val newsList = ArrayList<NewsDataClass>()
-//
-//                for(i in 0 until newsJsonArray.length()){
-//                    val newsJson = newsJsonArray.getJSONObject(i)
-//
-//                    val news = NewsDataClass(
-//                        newsJson.getString("title"),
-//                        newsJson.getString("author"),
-//                        newsJson.getString("url"),
-//                        newsJson.getString("urlToImage")
-//                    )
-//
-//                    newsList.add(news)
-//                }
-//
-//                mAdapter.updateNews(newsList)
-//            },
-//            { error ->
-//                Toast.makeText(this, "Something went wrong, Please try again later",
-//                    Toast.LENGTH_LONG).show()
-//            }
-//
-//        ) {
-//            @Throws(AuthFailureError::class)
-//            override fun getHeaders(): Map<String, String> {
-//                val params: MutableMap<String, String> = HashMap()
-//                params["User-Agent"] = "Mozilla/5.0"
-//                return params
-//            }
-//        }
-//
-//
-//        queue.add(jsonObjectRequest)
-//    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if(toggle.onOptionsItemSelected(item)){
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
 
-    fun fetchData() {
+
+    fun fetchData(query: String) {
         val queue = Volley.newRequestQueue(this)
-        val url = "https://newsapi.org/v2/top-headlines?country=in&apiKey=0bfd101369b949c4923b33baae521307"
+        val url = news_url+query
         val getRequest: JsonObjectRequest = object : JsonObjectRequest(
             Request.Method.GET,
             url,
